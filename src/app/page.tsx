@@ -2,10 +2,10 @@
 
 import React from "react";
 
-import HomePresentation from "@/presentations/Home";
+import ChatRoomPresentation from "@/presentations/ChatRoom";
 
 const HomePage: React.FC = () => {
-  return <HomePresentation />;
+  return <ChatRoomPresentation />;
 };
 
 export default HomePage;
