@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useCompletion } from "ai/react";
 
 import ChatNav from "./ChatNav";
@@ -10,12 +10,22 @@ import Icon from "@/icons";
 import { useChatRoom } from "@/useCases/chatRoom";
 
 const ChatRoomPresentation: React.FC = () => {
+  const overflowScroll = useRef();
+
   const {
     chats,
     dropdownMenu,
     toggleDeleteChat,
     toggleDropdownMenu,
     deleteChat,
+    deleteCollection,
+    handleInputChange,
+    handleDeleteCollection,
+    messageState,
+    handleSelectAllDelete,
+    handleSendMessage,
+    handlePressEnter,
+    handleDeleteLocalMessage,
   } = useChatRoom();
 
   return (
@@ -33,8 +43,24 @@ const ChatRoomPresentation: React.FC = () => {
         </div>
         {chats.map((chat) => {
           if (chat.from === "bot")
-            return <ChatBubbleStart isActiveDelete={deleteChat} chat={chat} />;
-          return <ChatBubbleEnd isActiveDelete={deleteChat} chat={chat} />;
+            return (
+              <ChatBubbleStart
+                key={chat.ID}
+                deleteCollection={deleteCollection}
+                onClickCheck={handleDeleteCollection}
+                isActiveDelete={deleteChat}
+                chat={chat}
+              />
+            );
+          return (
+            <ChatBubbleEnd
+              key={chat.ID}
+              deleteCollection={deleteCollection}
+              onClickCheck={handleDeleteCollection}
+              isActiveDelete={deleteChat}
+              chat={chat}
+            />
+          );
         })}
       </div>
 
@@ -42,40 +68,85 @@ const ChatRoomPresentation: React.FC = () => {
         <div className="container flex mx-auto absolute inset-x-0 bottom-5 h-16 px-5">
           <input
             type="text"
+            value={messageState}
+            onChange={handleInputChange}
+            onKeyUp={handlePressEnter}
             placeholder="Send Message..."
             className="input input-bordered w-full"
           />
 
-          <button className="btn btn-ghost btn-active btn-link">
-            <Icon width={30} height={30} iconName="send" />
-          </button>
+          {messageState && (
+            <button
+              className="btn btn-ghost btn-active btn-link"
+              onClick={handleSendMessage}
+            >
+              <Icon width={30} height={30} iconName="send" />
+            </button>
+          )}
         </div>
       ) : (
         <div className="absolute inset-x-0 bottom-15 h-16">
           <div className="divider" />
           <div className="flex px-7 ">
             <div className="flex-1">
-              <button>0 Terpilih |</button>
-              <button className="ml-2">Pilih Semua</button>
+              <button>{deleteCollection.length} Terpilih |</button>
+              <button onClick={handleSelectAllDelete} className="ml-2">
+                Pilih Semua
+              </button>
             </div>
 
             <div className="flex-none">
               <div className=" flex gap-2">
-                <Icon width={20} height={20} stroke="red" iconName="trash" />
-                <a
-                  href="#"
-                  className="block text-sm text-red-600"
-                  role="menuitem"
-                  id="menu-item-0"
-                  onClick={toggleDeleteChat}
-                >
-                  Hapus
-                </a>
+                {chats.length > 0 && deleteCollection.length > 0 && (
+                  <>
+                    <Icon
+                      width={20}
+                      height={20}
+                      stroke="red"
+                      iconName="trash"
+                    />
+                    <a
+                      href="#my_modal_1"
+                      className="block text-sm text-red-600"
+                      role="menuitem"
+                      id="menu-item-0"
+                      onClick={toggleDeleteChat}
+                    >
+                      Hapus
+                    </a>
+                  </>
+                )}
               </div>
             </div>
           </div>
         </div>
       )}
+      <dialog id="my_modal_1" className="modal modal-circle">
+        <div className="modal-box">
+          <h3 className="font-medium text-lg">Hapus Chat</h3>
+          <p className="py-4">
+            Kamu akan menghapus chat ini, chat yang telah dihapus tidak dapat
+            dipulihkan.
+          </p>
+          <div className="modal-action">
+            <div className="w-full">
+              <a href="#">
+                <button
+                  onClick={handleDeleteLocalMessage}
+                  className="btn btn-circle w-full hover:bg-error bg-error text-white"
+                >
+                  Hapus Sekarang
+                </button>
+              </a>
+              <a href="#">
+                <button className="font-bold text-sm border-white hover:border-white btn-circle  hover:bg-white bg-white btn-active w-full">
+                  Kembali
+                </button>
+              </a>
+            </div>
+          </div>
+        </div>
+      </dialog>
     </div>
   );
 };
