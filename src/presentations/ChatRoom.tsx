@@ -106,7 +106,7 @@ const ChatRoomPresentation: React.FC = () => {
                       iconName="trash"
                     />
                     <a
-                      href="#my_modal_1"
+                      href="#modal_delete_chat"
                       className="block text-sm text-red-600"
                       role="menuitem"
                       id="menu-item-0"
@@ -121,7 +121,7 @@ const ChatRoomPresentation: React.FC = () => {
           </div>
         </div>
       )}
-      <dialog id="my_modal_1" className="modal modal-circle">
+      <dialog id="modal_delete_chat" className="modal modal-circle">
         <div className="modal-box">
           <h3 className="font-medium text-lg">Hapus Chat</h3>
           <p className="py-4">
