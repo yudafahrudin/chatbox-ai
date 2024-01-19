@@ -1,15 +1,9 @@
-export interface Chat {
-  ID: string;
-  message: string;
-  date: string;
-  from: string;
-  liked?: boolean;
-  disliked?: boolean;
-}
+import { Message } from "@/domains/Messages";
 
 export interface ChatBubble {
   isActiveDelete: boolean;
   onClickCheck: (ID: string) => void;
   deleteCollection?: String[];
-  chat: Chat;
+  message: Message;
+  isLoading?: boolean;
 }

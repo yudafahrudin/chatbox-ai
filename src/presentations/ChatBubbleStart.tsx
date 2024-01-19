@@ -8,9 +8,10 @@ import { copyText, formatDateTime } from "@/helpers";
 
 const ChatBubbleStart: React.FC<ChatBubble> = ({
   isActiveDelete = false,
-  chat,
+  message,
   onClickCheck,
   deleteCollection,
+  isLoading,
 }) => {
   const [showToast, setShowToast] = useState(false);
 
@@ -22,7 +23,7 @@ const ChatBubbleStart: React.FC<ChatBubble> = ({
     }, 1000);
   };
 
-  const checkedSelect = Boolean(deleteCollection?.includes(chat.ID));
+  const checkedSelect = Boolean(deleteCollection?.includes(message?.id));
 
   return (
     <div className="chat chat-start mb-3 flex">
@@ -31,7 +32,7 @@ const ChatBubbleStart: React.FC<ChatBubble> = ({
           readOnly
           type="checkbox"
           checked={checkedSelect}
-          onClick={() => onClickCheck(chat.ID)}
+          onClick={() => onClickCheck(message?.id)}
           className="checkbox mt-auto mb-2"
         />
       )}
@@ -44,22 +45,28 @@ const ChatBubbleStart: React.FC<ChatBubble> = ({
           />
         </div>
       </div>
+
       <div className="chat-bubble p-3">
         <div className="mb-2">
-          {chat.message}{" "}
+          {message?.content}{" "}
           <time className="text-xs opacity-50">
-            {formatDateTime(chat.date)}
+            {formatDateTime(message?.createdAt || new Date())}
           </time>
         </div>
-        <div className="flex flex-row-reverse gap-4 ">
-          <Icon width={15} height={15} stroke="#fff" iconName="refresh" />
-          <Icon width={15} height={15} stroke="#fff" iconName="like" />
-          <button onClick={() => handleCopy(chat.message)}>
-            <Icon width={15} height={15} stroke="#fff" iconName="copy" />
-          </button>
-          <Icon width={15} height={15} stroke="#fff" iconName="dislike" />
-        </div>
+        {isLoading ? (
+          <span className="loading loading-dots loading-xs"></span>
+        ) : (
+          <div className="flex flex-row-reverse gap-4 ">
+            <Icon width={15} height={15} stroke="#fff" iconName="refresh" />
+            <Icon width={15} height={15} stroke="#fff" iconName="like" />
+            <button onClick={() => handleCopy(message?.content)}>
+              <Icon width={15} height={15} stroke="#fff" iconName="copy" />
+            </button>
+            <Icon width={15} height={15} stroke="#fff" iconName="dislike" />
+          </div>
+        )}
       </div>
+
       {showToast && (
         <div className="toast toast-top toast-center">
           <div className="alert alert-success">

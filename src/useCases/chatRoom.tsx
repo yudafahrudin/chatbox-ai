@@ -1,24 +1,37 @@
 import { useEffect, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
-import { format } from "date-fns";
+import { useChat } from "ai/react";
 
-import { Chat } from "@/configs/interfaces";
+import { Message } from "@/domains/Messages";
 import { saveLocalMessage, loadLocalMessage } from "@/helpers";
 
 export const useChatRoom = () => {
+  const {
+    isLoading,
+    messages,
+    input,
+    handleInputChange,
+    handleSubmit,
+    setMessages,
+  } = useChat({
+    api: "/api/completion",
+  });
+
   const [dropdownMenu, setDropdownMenu] = useState(false);
   const [deleteChat, setDeleteChat] = useState(false);
   const [deleteCollection, setDeleteCollection] = useState<String[]>([]);
-  const [messageState, setMessageState] = useState("");
-
-  const [chats, setChats] = useState<Chat[]>([]);
 
   useEffect(() => {
-    const localMessage: Chat[] = loadLocalMessage();
+    const localMessage: Message[] = loadLocalMessage();
     if (localMessage.length !== 0) {
-      setChats(localMessage);
+      setMessages(localMessage);
     }
   }, []);
+
+  useEffect(() => {
+    if (messages.length > 0) {
+      saveLocalMessage(messages);
+    }
+  }, [messages]);
 
   const toggleDropdownMenu = () => {
     if (!deleteChat) {
@@ -30,65 +43,31 @@ export const useChatRoom = () => {
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setMessageState(e.target.value);
-  };
-
-  const handlePressEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      handleSendMessage();
-    }
-  };
-
   const handleSendMessage = () => {
-    const stringRand = String(Math.random() + 1).toString();
-    setChats((prev) => {
-      const newChats = [
-        ...prev,
-        {
-          ID: uuidv4(),
-          message: messageState,
-          date: format(new Date(), "yyyy-MM-dd'T'HH:mm:ss'Z'"),
-          from: "user",
-          liked: false,
-          disliked: false,
-        },
-        {
-          ID: uuidv4(),
-          message: stringRand,
-          date: format(new Date(), "yyyy-MM-dd'T'HH:mm:ss'Z'"),
-          from: "bot",
-          liked: false,
-          disliked: false,
-        },
-      ];
-      saveLocalMessage(newChats);
-      setMessageState("");
-      return newChats;
-    });
+    saveLocalMessage(messages);
   };
 
-  const handleDeleteCollection = (ID: string) => {
+  const handleDeleteCollection = (id: string) => {
     if (deleteCollection.length === 0) {
-      setDeleteCollection([ID]);
+      setDeleteCollection([id]);
     } else {
-      if (!deleteCollection.includes(ID)) {
+      if (!deleteCollection.includes(id)) {
         setDeleteCollection((prev) => {
-          return [...prev, ID];
+          return [...prev, id];
         });
       } else {
         setDeleteCollection((prev) => {
-          return [...prev.filter((IDs) => IDs !== ID)];
+          return [...prev.filter((ids) => ids !== id)];
         });
       }
     }
   };
 
   const handleDeleteLocalMessage = () => {
-    const newChats = chats.filter(
-      (chat) => !deleteCollection.includes(chat.ID)
+    const newChats = messages.filter(
+      (chat) => !deleteCollection.includes(chat.id)
     );
-    setChats(newChats);
+    setMessages(newChats);
     saveLocalMessage(newChats);
     setDeleteCollection([]);
     setDeleteChat(false);
@@ -96,8 +75,8 @@ export const useChatRoom = () => {
 
   const handleSelectAllDelete = () => {
     const collectionDelete: String[] = [];
-    chats.forEach((chat: Chat) => {
-      collectionDelete.push(chat.ID);
+    messages.forEach((chat: Message) => {
+      collectionDelete.push(chat.id);
     });
     setDeleteCollection(collectionDelete);
   };
@@ -107,29 +86,24 @@ export const useChatRoom = () => {
     setDeleteChat(true);
   };
 
-  const handleSetChat = () => {
-    setChats([]);
-  };
-
   const copyAction = () => {
     navigator.clipboard.writeText("sss");
   };
 
-  console.log(deleteCollection);
   return {
+    isLoading,
+    handleSubmit,
+    messages,
+    input,
     handleDeleteCollection,
     handleSendMessage,
     copyAction,
     handleInputChange,
-    messageState,
-    chats,
     handleDeleteLocalMessage,
     handleSelectAllDelete,
     deleteCollection,
     dropdownMenu,
     deleteChat,
-    handleSetChat,
-    handlePressEnter,
     toggleDeleteChat,
     toggleDropdownMenu,
   };

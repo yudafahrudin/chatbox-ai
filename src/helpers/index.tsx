@@ -1,15 +1,15 @@
 import { format } from "date-fns";
-import { Chat } from "@/configs/interfaces";
+import { Message } from "@/domains/Messages";
 
 export const copyText = (text: string) => navigator.clipboard.writeText(text);
 
-export const saveLocalMessage = (chat: Chat[]) => {
+export const saveLocalMessage = (chat: Message[]) => {
   localStorage.setItem("message", JSON.stringify(chat));
 };
 export const loadLocalMessage = () => {
   return JSON.parse(localStorage.getItem("message") || "[]");
 };
 
-export const formatDateTime = (date: string) => {
+export const formatDateTime = (date: Date) => {
   return format(date, "hh:mm aaaaa'm'");
 };

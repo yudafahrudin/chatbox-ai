@@ -8,16 +8,18 @@ import { formatDateTime } from "@/helpers";
 
 const ChatBubbleEnd: React.FC<ChatBubble> = ({
   isActiveDelete = false,
-  chat,
+  message,
   onClickCheck,
   deleteCollection,
 }) => {
-  const checkedSelect = Boolean(deleteCollection?.includes(chat.ID));
+  const checkedSelect = Boolean(deleteCollection?.includes(message.id));
   return (
     <div className="chat chat-end">
       <div className="chat-bubble bg-base-300 text-inherit	">
-        {chat.message}{" "}
-        <time className="text-xs opacity-50">{formatDateTime(chat.date)}</time>
+        {message.content}{" "}
+        <time className="text-xs opacity-50">
+          {formatDateTime(message.createdAt || new Date())}
+        </time>
       </div>
 
       {isActiveDelete && (
@@ -25,7 +27,7 @@ const ChatBubbleEnd: React.FC<ChatBubble> = ({
           readOnly
           type="checkbox"
           checked={checkedSelect}
-          onClick={() => onClickCheck(chat.ID)}
+          onClick={() => onClickCheck(message.id)}
           className="checkbox mt-auto mb-2"
         />
       )}

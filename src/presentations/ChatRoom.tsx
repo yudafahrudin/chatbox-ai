@@ -1,5 +1,4 @@
-import React, { useRef } from "react";
-import { useCompletion } from "ai/react";
+import React, { useRef, useMemo } from "react";
 
 import ChatNav from "./ChatNav";
 import ChatBubbleStart from "./ChatBubbleStart";
@@ -13,20 +12,25 @@ const ChatRoomPresentation: React.FC = () => {
   const overflowScroll = useRef();
 
   const {
-    chats,
+    isLoading,
+    messages,
+    input,
+    handleSubmit,
+    handleInputChange,
     dropdownMenu,
     toggleDeleteChat,
     toggleDropdownMenu,
     deleteChat,
     deleteCollection,
-    handleInputChange,
+    handleInputChange: handleInputChangeChatRoom,
     handleDeleteCollection,
-    messageState,
     handleSelectAllDelete,
-    handleSendMessage,
-    handlePressEnter,
     handleDeleteLocalMessage,
   } = useChatRoom();
+
+  const lastIndexMessage = useMemo(() => {
+    return messages.length - 1;
+  }, [messages]);
 
   return (
     <div className="h-screen">
@@ -36,54 +40,53 @@ const ChatRoomPresentation: React.FC = () => {
         toggleDeleteChat={toggleDeleteChat}
         toggleDropdownMenu={toggleDropdownMenu}
       />
-
       <div className="container mx-auto chat-area p-5 h-4/5 overflow-auto scroll-smooth mt-5">
-        <div className="my-5 w-full text-center">
-          <div className="badge badge-ghost px-5 py-3">today</div>
-        </div>
-        {chats.map((chat) => {
-          if (chat.from === "bot")
+        {messages.map((message, index) => {
+          if (message.role === "assistant")
             return (
               <ChatBubbleStart
-                key={chat.ID}
+                key={message.id}
                 deleteCollection={deleteCollection}
                 onClickCheck={handleDeleteCollection}
                 isActiveDelete={deleteChat}
-                chat={chat}
+                message={message}
+                isLoading={lastIndexMessage === index ? isLoading : false}
               />
             );
           return (
             <ChatBubbleEnd
-              key={chat.ID}
+              key={message.id}
               deleteCollection={deleteCollection}
               onClickCheck={handleDeleteCollection}
               isActiveDelete={deleteChat}
-              chat={chat}
+              message={message}
             />
           );
         })}
       </div>
 
       {!deleteChat ? (
-        <div className="container flex mx-auto absolute inset-x-0 bottom-5 h-16 px-5">
+        <form
+          className="container flex mx-auto absolute inset-x-0 bottom-5 h-16 px-5"
+          onSubmit={(e) => {
+            handleSubmit(e);
+          }}
+        >
           <input
             type="text"
-            value={messageState}
+            value={input}
             onChange={handleInputChange}
-            onKeyUp={handlePressEnter}
             placeholder="Send Message..."
             className="input input-bordered w-full"
+            disabled={isLoading}
           />
 
-          {messageState && (
-            <button
-              className="btn btn-ghost btn-active btn-link"
-              onClick={handleSendMessage}
-            >
+          {input && (
+            <button type="submit" className="btn btn-ghost btn-active btn-link">
               <Icon width={30} height={30} iconName="send" />
             </button>
           )}
-        </div>
+        </form>
       ) : (
         <div className="absolute inset-x-0 bottom-15 h-16">
           <div className="divider" />
@@ -97,7 +100,7 @@ const ChatRoomPresentation: React.FC = () => {
 
             <div className="flex-none">
               <div className=" flex gap-2">
-                {chats.length > 0 && deleteCollection.length > 0 && (
+                {messages.length > 0 && deleteCollection.length > 0 && (
                   <>
                     <Icon
                       width={20}
@@ -121,6 +124,7 @@ const ChatRoomPresentation: React.FC = () => {
           </div>
         </div>
       )}
+
       <dialog id="modal_delete_chat" className="modal modal-circle">
         <div className="modal-box">
           <h3 className="font-medium text-lg">Hapus Chat</h3>
