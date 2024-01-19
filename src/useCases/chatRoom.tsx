@@ -87,10 +87,6 @@ export const useChatRoom = () => {
     setDeleteChat(true);
   };
 
-  const copyAction = () => {
-    navigator.clipboard.writeText("sss");
-  };
-
   return {
     reload,
     isLoading,
@@ -99,7 +95,6 @@ export const useChatRoom = () => {
     input,
     handleDeleteCollection,
     handleSendMessage,
-    copyAction,
     handleInputChange,
     handleDeleteLocalMessage,
     handleSelectAllDelete,
