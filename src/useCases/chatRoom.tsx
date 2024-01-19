@@ -12,6 +12,7 @@ export const useChatRoom = () => {
     handleInputChange,
     handleSubmit,
     setMessages,
+    reload,
   } = useChat({
     api: "/api/completion",
   });
@@ -91,6 +92,7 @@ export const useChatRoom = () => {
   };
 
   return {
+    reload,
     isLoading,
     handleSubmit,
     messages,

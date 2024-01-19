@@ -12,8 +12,11 @@ const ChatBubbleStart: React.FC<ChatBubble> = ({
   onClickCheck,
   deleteCollection,
   isLoading,
+  lastIndexMessage,
+  onReload,
 }) => {
   const [showToast, setShowToast] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
 
   const handleCopy = (message: string) => {
     copyText(message);
@@ -56,13 +59,33 @@ const ChatBubbleStart: React.FC<ChatBubble> = ({
         {isLoading ? (
           <span className="loading loading-dots loading-xs"></span>
         ) : (
-          <div className="flex flex-row-reverse gap-4 ">
-            <Icon width={15} height={15} stroke="#fff" iconName="refresh" />
-            <Icon width={15} height={15} stroke="#fff" iconName="like" />
+          <div className="flex flex-row items-end gap-4 ">
+            {lastIndexMessage && (
+              <button onClick={() => onReload()}>
+                <Icon width={15} height={15} stroke="#fff" iconName="refresh" />
+              </button>
+            )}
             <button onClick={() => handleCopy(message?.content)}>
               <Icon width={15} height={15} stroke="#fff" iconName="copy" />
             </button>
-            <Icon width={15} height={15} stroke="#fff" iconName="dislike" />
+            <a
+              href="#modal_like_delete_chat"
+              className="block text-sm text-red-600"
+              role="menuitem"
+              id="menu-item-0"
+              onClick={() => setIsLiked(true)}
+            >
+              <Icon width={15} height={15} stroke="#fff" iconName="like" />
+            </a>
+            <a
+              href="#modal_like_delete_chat"
+              className="block text-sm text-red-600"
+              role="menuitem"
+              id="menu-item-0"
+              onClick={() => setIsLiked(false)}
+            >
+              <Icon width={15} height={15} stroke="#fff" iconName="dislike" />
+            </a>
           </div>
         )}
       </div>
@@ -74,6 +97,48 @@ const ChatBubbleStart: React.FC<ChatBubble> = ({
           </div>
         </div>
       )}
+
+      <dialog id="modal_like_delete_chat" className="modal modal-circle">
+        <div className="modal-box">
+          <div className="flex flex-row justify-between">
+            <h3 className="font-medium text-lg">Rating</h3>
+            <a href="/#" className="block text-sm text-red-600">
+              <Icon width={20} height={20} iconName="close" />
+            </a>
+          </div>
+          <div className="text-center">
+            <div className="pt-10 pb-2 flex">
+              <span className="mx-auto">
+                <Icon
+                  width={40}
+                  height={40}
+                  iconName={isLiked ? "like" : "dislike"}
+                />
+              </span>
+            </div>
+            <p className="py-4 ">
+              <strong>
+                Kamu {isLiked ? "menyukai" : "tidak menyukai"} balasan dari AI
+              </strong>
+              <br />
+              Ceritakan pengalaman tentang balasan chat ini
+            </p>
+            <textarea
+              placeholder="Berikan tanggapanmu"
+              className="textarea textarea-bordered textarea-md w-full"
+            ></textarea>
+            <div className="modal-action">
+              <div className="w-full">
+                <a href="/#">
+                  <button className="font-bold text-sm border-white hover:border-white btn-circle btn-active w-full">
+                    KIRIM
+                  </button>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </dialog>
     </div>
   );
 };

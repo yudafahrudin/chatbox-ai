@@ -12,6 +12,7 @@ const ChatRoomPresentation: React.FC = () => {
   const overflowScroll = useRef();
 
   const {
+    reload,
     isLoading,
     messages,
     input,
@@ -22,7 +23,6 @@ const ChatRoomPresentation: React.FC = () => {
     toggleDropdownMenu,
     deleteChat,
     deleteCollection,
-    handleInputChange: handleInputChangeChatRoom,
     handleDeleteCollection,
     handleSelectAllDelete,
     handleDeleteLocalMessage,
@@ -46,16 +46,19 @@ const ChatRoomPresentation: React.FC = () => {
             return (
               <ChatBubbleStart
                 key={message.id}
+                onReload={() => reload()}
                 deleteCollection={deleteCollection}
                 onClickCheck={handleDeleteCollection}
                 isActiveDelete={deleteChat}
                 message={message}
                 isLoading={lastIndexMessage === index ? isLoading : false}
+                lastIndexMessage={lastIndexMessage === index ? true : false}
               />
             );
           return (
             <ChatBubbleEnd
               key={message.id}
+              onReload={() => reload()}
               deleteCollection={deleteCollection}
               onClickCheck={handleDeleteCollection}
               isActiveDelete={deleteChat}

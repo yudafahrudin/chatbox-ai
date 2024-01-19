@@ -6,4 +6,6 @@ export interface ChatBubble {
   deleteCollection?: String[];
   message: Message;
   isLoading?: boolean;
+  lastIndexMessage?: boolean;
+  onReload: () => {};
 }

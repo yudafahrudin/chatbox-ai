@@ -9,7 +9,8 @@ export type IconNameType =
   | "copy"
   | "refresh"
   | "send"
-  | "trash";
+  | "trash"
+  | "close";
 
 interface IconProp {
   width?: number;
