@@ -1,4 +1,3 @@
-import { format } from "date-fns";
 import { Message } from "@/domains/Messages";
 
 export const copyText = (text: string) => navigator.clipboard.writeText(text);
@@ -8,8 +7,4 @@ export const saveLocalMessage = (chat: Message[]) => {
 };
 export const loadLocalMessage = () => {
   return JSON.parse(localStorage.getItem("message") || "[]");
-};
-
-export const formatDateTime = (date: Date) => {
-  return format(date, "hh:mm aaaaa'm'");
 };
