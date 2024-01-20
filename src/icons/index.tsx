@@ -16,12 +16,14 @@ interface IconProp {
   width?: number;
   height?: number;
   stroke?: string;
+  strokeWidth?: string;
   iconName: IconNameType;
 }
 
 const Icon: React.FC<IconProp> = ({
   width = "24",
   height = "24",
+  strokeWidth = "2",
   stroke = "#000000",
   iconName,
 }) => {
@@ -33,7 +35,7 @@ const Icon: React.FC<IconProp> = ({
       viewBox="0 0 24 24"
       fill="none"
       stroke={stroke}
-      strokeWidth="2"
+      strokeWidth={strokeWidth}
       strokeLinecap="round"
       strokeLinejoin="round"
     >

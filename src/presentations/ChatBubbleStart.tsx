@@ -4,27 +4,29 @@ import Icon from "@/icons";
 
 import { ChatBubble } from "@/configs/interfaces";
 
-import { copyText, formatDateTime } from "@/helpers";
+import { formatDateTime } from "@/helpers";
+
+import { useChatBubbleStart } from "@/useCases/chatBubbleStart";
 
 const ChatBubbleStart: React.FC<ChatBubble> = ({
   isActiveDelete = false,
   message,
-  onClickCheck,
   deleteCollection,
   isLoading,
   lastIndexMessage,
   onReload,
+  onClickCheck,
 }) => {
-  const [showToast, setShowToast] = useState(false);
-  const [isLiked, setIsLiked] = useState(false);
-
-  const handleCopy = (message: string) => {
-    copyText(message);
-    setShowToast(true);
-    setTimeout(() => {
-      setShowToast(false);
-    }, 1000);
-  };
+  const {
+    handleLikeDislikeChat,
+    ratingMessage,
+    showToast,
+    handleCopy,
+    isLiked,
+    setIsLiked,
+    onRatingTextChange,
+    onRatingTextSubmit,
+  } = useChatBubbleStart(message?.id);
 
   const checkedSelect = Boolean(deleteCollection?.includes(message?.id));
 
@@ -69,22 +71,40 @@ const ChatBubbleStart: React.FC<ChatBubble> = ({
               <Icon width={15} height={15} stroke="#fff" iconName="copy" />
             </button>
             <a
-              href="#modal_like_delete_chat"
+              href={`#modal_like_delete_chat${message.id}`}
               className="block text-sm text-red-600"
               role="menuitem"
               id="menu-item-0"
-              onClick={() => setIsLiked(true)}
+              onClick={() => {
+                handleLikeDislikeChat("like");
+                setIsLiked(true);
+              }}
             >
-              <Icon width={15} height={15} stroke="#fff" iconName="like" />
+              <Icon
+                width={15}
+                height={15}
+                strokeWidth={ratingMessage?.liked ? "4.5" : "2"}
+                stroke="#fff"
+                iconName="like"
+              />
             </a>
             <a
-              href="#modal_like_delete_chat"
+              href={`#modal_like_delete_chat${message.id}`}
               className="block text-sm text-red-600"
               role="menuitem"
               id="menu-item-0"
-              onClick={() => setIsLiked(false)}
+              onClick={() => {
+                handleLikeDislikeChat("dislike");
+                setIsLiked(false);
+              }}
             >
-              <Icon width={15} height={15} stroke="#fff" iconName="dislike" />
+              <Icon
+                width={15}
+                height={15}
+                strokeWidth={ratingMessage?.disliked ? "4.5" : "2"}
+                stroke="#fff"
+                iconName="dislike"
+              />
             </a>
           </div>
         )}
@@ -98,7 +118,10 @@ const ChatBubbleStart: React.FC<ChatBubble> = ({
         </div>
       )}
 
-      <dialog id="modal_like_delete_chat" className="modal modal-circle">
+      <dialog
+        id={`modal_like_delete_chat${message.id}`}
+        className="modal modal-circle"
+      >
         <div className="modal-box">
           <div className="flex flex-row justify-between">
             <h3 className="font-medium text-lg">Rating</h3>
@@ -123,14 +146,20 @@ const ChatBubbleStart: React.FC<ChatBubble> = ({
               <br />
               Ceritakan pengalaman tentang balasan chat ini
             </p>
+
             <textarea
               placeholder="Berikan tanggapanmu"
               className="textarea textarea-bordered textarea-md w-full"
-            ></textarea>
+              onChange={onRatingTextChange}
+              defaultValue={ratingMessage?.ratingMessage}
+            />
             <div className="modal-action">
               <div className="w-full">
                 <a href="/#">
-                  <button className="font-bold text-sm border-white hover:border-white btn-circle btn-active w-full">
+                  <button
+                    onClick={onRatingTextSubmit}
+                    className="btn btn-info font-bold btn-circle w-full"
+                  >
                     KIRIM
                   </button>
                 </a>

@@ -1,8 +1,13 @@
 import { useEffect, useState } from "react";
 import { useChat } from "ai/react";
 
-import { Message } from "@/domains/Messages";
-import { saveLocalMessage, loadLocalMessage } from "@/helpers";
+import { Message, RatingMessage } from "@/domains/Messages";
+import {
+  saveLocalMessage,
+  loadLocalMessage,
+  saveLocalRatingMessage,
+  loadLocalRatingMessage,
+} from "@/helpers";
 
 export const useChatRoom = () => {
   const {
@@ -29,8 +34,45 @@ export const useChatRoom = () => {
   }, []);
 
   useEffect(() => {
+    let ratingMessage: RatingMessage[] = loadLocalRatingMessage();
+
     if (messages.length > 0) {
       saveLocalMessage(messages);
+      const collectionIds = messages.map((message) => message.id);
+
+      // if dont have rating locale
+      if (ratingMessage.length === 0) {
+        messages.forEach((message: Message) => {
+          if (message.role === "assistant") {
+            ratingMessage.push({
+              id: message.id,
+              liked: false,
+              disliked: false,
+              ratingMessage: "",
+            });
+          }
+        });
+      }
+
+      // if new chat incoming
+      if (ratingMessage.length < messages.length) {
+        const lastMessage = messages[messages.length - 1];
+        ratingMessage.push({
+          id: lastMessage.id,
+          liked: false,
+          disliked: false,
+          ratingMessage: "",
+        });
+      }
+
+      // if some chat deleted
+      if (ratingMessage.length > messages.length) {
+        ratingMessage = ratingMessage.filter((rating) =>
+          collectionIds.includes(rating.id)
+        );
+      }
+
+      saveLocalRatingMessage(ratingMessage);
     }
   }, [messages]);
 
@@ -87,12 +129,35 @@ export const useChatRoom = () => {
     setDeleteChat(true);
   };
 
+  const handleLikeDislikeChat = (id: string, type: string) => {
+    const ratingMessage: RatingMessage[] = loadLocalRatingMessage();
+    const upadatedRating = ratingMessage.map((rating) => {
+      if (rating.id === id) {
+        if (type === "like") {
+          rating.disliked = false;
+          rating.liked = true;
+        } else {
+          rating.liked = false;
+          rating.disliked = true;
+        }
+      }
+      return rating;
+    });
+    saveLocalRatingMessage(upadatedRating);
+  };
+
+  const getRatingMessage = (id: string) => {
+    const ratingMessage: RatingMessage[] = loadLocalRatingMessage();
+    return ratingMessage.find((rating) => rating.id === id);
+  };
+
   return {
     reload,
     isLoading,
     handleSubmit,
     messages,
     input,
+    getRatingMessage,
     handleDeleteCollection,
     handleSendMessage,
     handleInputChange,
@@ -101,6 +166,7 @@ export const useChatRoom = () => {
     deleteCollection,
     dropdownMenu,
     deleteChat,
+    handleLikeDislikeChat,
     toggleDeleteChat,
     toggleDropdownMenu,
   };
