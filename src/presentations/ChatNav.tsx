@@ -1,6 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
+import Image from "next/image";
 
 import Icon from "@/icons";
+
+import profilePic from "@/assets/profile-image.png";
 
 interface ChatRoomPresentationProps {
   toggleDropdownMenu: () => void;
@@ -21,7 +24,7 @@ const ChatRoomPresentation: React.FC<ChatRoomPresentationProps> = ({
         <div className="flex-1">
           <div className="avatar mx-3 mr-5">
             <div className="w-8 rounded-full">
-              <img src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" />
+              <Image width={20} height={20} alt="bot-image" src={profilePic} />
             </div>
           </div>
           <div>Livy Renata</div>

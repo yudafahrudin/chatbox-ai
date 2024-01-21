@@ -61,6 +61,7 @@ export const useChatBubbleStart = (id: string) => {
   };
 
   return {
+    ratingText,
     handleCopy,
     showToast,
     setShowToast,

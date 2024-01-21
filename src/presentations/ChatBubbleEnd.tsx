@@ -1,7 +1,5 @@
 import React from "react";
 
-import Icon from "@/icons";
-
 import { ChatBubble } from "@/configs/interfaces";
 
 import { formatDateTime } from "@/helpers";

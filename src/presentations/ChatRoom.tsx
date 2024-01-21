@@ -1,4 +1,6 @@
-import React, { useRef, useMemo } from "react";
+"use client";
+
+import React, { useMemo } from "react";
 
 import ChatNav from "./ChatNav";
 import ChatBubbleStart from "./ChatBubbleStart";
@@ -9,8 +11,6 @@ import Icon from "@/icons";
 import { useChatRoom } from "@/useCases/chatRoom";
 
 const ChatRoomPresentation: React.FC = () => {
-  const overflowScroll = useRef();
-
   const {
     reload,
     isLoading,

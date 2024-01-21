@@ -1,4 +1,7 @@
-import React, { useState } from "react";
+"use client";
+
+import React from "react";
+import Image from "next/image";
 
 import Icon from "@/icons";
 
@@ -7,6 +10,8 @@ import { ChatBubble } from "@/configs/interfaces";
 import { formatDateTime } from "@/helpers";
 
 import { useChatBubbleStart } from "@/useCases/chatBubbleStart";
+
+import profilePic from "@/assets/profile-image.png";
 
 const ChatBubbleStart: React.FC<ChatBubble> = ({
   isActiveDelete = false,
@@ -18,6 +23,7 @@ const ChatBubbleStart: React.FC<ChatBubble> = ({
   onClickCheck,
 }) => {
   const {
+    ratingText,
     handleLikeDislikeChat,
     ratingMessage,
     showToast,
@@ -44,10 +50,7 @@ const ChatBubbleStart: React.FC<ChatBubble> = ({
 
       <div className="chat-image avatar">
         <div className="w-8 rounded-full">
-          <img
-            alt="Tailwind CSS chat bubble component"
-            src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
-          />
+          <Image alt="profile-bot" src={profilePic} />
         </div>
       </div>
 
@@ -155,8 +158,15 @@ const ChatBubbleStart: React.FC<ChatBubble> = ({
             />
             <div className="modal-action">
               <div className="w-full">
-                <a href="/#">
+                <a
+                  href={
+                    !ratingMessage?.ratingMessage && !ratingText
+                      ? `/#modal_like_delete_chat${message.id}`
+                      : "/#"
+                  }
+                >
                   <button
+                    disabled={!ratingMessage?.ratingMessage && !ratingText}
                     onClick={onRatingTextSubmit}
                     className="btn btn-info font-bold btn-circle w-full"
                   >
