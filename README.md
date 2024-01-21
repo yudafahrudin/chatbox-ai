@@ -17,7 +17,7 @@ This is mini project for chat using Completion API openAI
 ### Installation
 Clone the repo
    ```sh
-   git clone git@github.com:yudafahrudin/ihc-song-apps.git
+   git clone git@github.com:yudafahrudin/chatbox-ai.git
    ```
 Install packages using yarn
    ```sh
@@ -25,7 +25,11 @@ Install packages using yarn
    ```
 
 ### How To Run Locally
+create .env file and fill NEXT_PUBLIC_OPENAI_API_KEY with your key from completion API from openAI
 ```sh
-create .env.local
-
+NEXT_PUBLIC_OPENAI_API_KEY=your key from Completion API
+```
+and then run 
+```sh
+yarn dev
 ```
