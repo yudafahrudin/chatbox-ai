@@ -1,11 +1,11 @@
-## SONG OF ME MINI PROJECT
+## CHATBOX AI MINI PROJECT
 
 
 ### About The Project
 
-This is mini project for showing top artist and song using last.fm RESTApi interface
+This is mini project for chat using Completion API openAI
 <br /><br />
-<img width="600" alt="Screenshot 2024-01-14 at 11 48 36 AM" src="https://github.com/yudafahrudin/ihc-song-apps/assets/30807550/4e1e47f1-054e-491e-b99e-af09917cef19">
+<img width="328" alt="Screenshot 2024-01-21 at 9 41 19 AM" src="https://github.com/yudafahrudin/chatbox-ai/assets/30807550/89ff04d3-9d06-474e-bf86-acd0e4c1530a">
 
 ### Built With
 <div>
@@ -26,5 +26,6 @@ Install packages using yarn
 
 ### How To Run Locally
 ```sh
-yarn dev
+create .env.local
+
 ```
